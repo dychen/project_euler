@@ -1,6 +1,40 @@
 """
 Reused procedures across problems.
 """
+import math
+
+def is_prime(n):
+    if n < 2:
+        return False
+    if n == 2:
+        return True
+    for m in xrange(2, int(math.ceil(math.sqrt(n)))+1):
+        if n % m == 0:
+            return False
+    return True
+
+def generate_primes(n):
+    """
+    Generate all primes up to and including @n
+    Args:
+        n [int]: The largest number to consider.
+    Return:
+        [list]: List of primes [2, 3, 5, ...]
+    """
+    if n < 2:
+        return []
+    is_prime_arr = [True for _ in xrange(0, n+1)]
+    is_prime_arr[0] = False
+    is_prime_arr[1] = False
+    i = 2
+    while i < len(is_prime_arr):
+        if is_prime_arr[i]:
+            j = i * 2
+            while j < len(is_prime_arr):
+                is_prime_arr[j] = False
+                j += i
+        i += 1
+    return [idx for idx, e in enumerate(is_prime_arr) if e]
 
 def generate_pandigitals(ndigits=9):
     """
