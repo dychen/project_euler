@@ -36,6 +36,54 @@ def generate_primes(n):
         i += 1
     return [idx for idx, e in enumerate(is_prime_arr) if e]
 
+def find_next_prime():
+    """
+    A generator that yields successive primes (starting from 2).
+
+    Keep a map of upcoming composites >= n and primes that make the numbers
+    composite.
+
+    n = 2:
+      yield 2, { 4: [2] }
+    n = 3:
+      yield 3, { 4: [2], 9: [3] }
+    n = 4:
+      { 6: [2], 9: [3] }
+    n = 5:
+      yield: 5, { 6: [2], 9: [3], 25: [5] }
+    n = 6:
+      { 8: [2], 9: [3], 25: [5] }
+    n = 7:
+      { 8: [2], 9: [3], 25: [5], 49: [7] }
+    n = 8:
+      { 9: [3], 10: [2], 25: [5], 49: [7] }
+    n = 9:
+      { 10: [2], 12: [3], 25: [5], 49: [7] }
+    n = 10:
+      { 12: [2, 3], 25: [5], 49: [7] }
+    n = 11:
+      yield 11, { 12: [2, 3], 25: [5], 49: [7], 121: [11] }
+    n = 12:
+      { 14: [2], 15: [3], 25: [5], 49: [7], 121: [11] }
+    """
+    composites = {}
+    n = 2
+    while True:
+        # Prime
+        if n not in composites:
+            yield n
+            # n^2 because all composites < n^2 should be divisble by some other
+            # prime in the map
+            composites[n * n] = [n]
+        # Composite
+        else:
+            for factor in composites[n]:
+                # Increment the composite by the prime factor "factor" to mark
+                # upcoming composites
+                composites.setdefault(n + factor, []).append(factor)
+            del composites[n]
+        n += 1
+
 def generate_pandigitals(ndigits=9):
     """
     Recursively generate string representations of all pandigitals from
